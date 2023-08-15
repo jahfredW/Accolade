@@ -1,0 +1,46 @@
+version: "3"
+
+services:
+  ###> doctrine/doctrine-bundle ###
+  database:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: graphikart_api
+    ports:
+      - "3306"
+
+    volumes:
+      - database_data:/var/lib/mysql
+      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
+      # - ./docker/db/data:/var/lib/postgresql/data:rw
+  ###< doctrine/doctrine-bundle ###
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    depends_on:
+      - database
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+
+  www:
+    build: php
+    container_name: www_docker_symfony
+    ports:
+      - "8741:80"
+    volumes:
+      - ./php/vhosts:/etc/apache2/sites-enabled
+      - ./:/var/www
+    restart: always
+    networks:
+      - dev
+
+volumes:
+  ###> doctrine/doctrine-bundle ###
+  database_data:
+###< doctrine/doctrine-bundle ###
+
+networks:
+  dev:
