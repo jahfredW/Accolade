@@ -9,6 +9,8 @@ services:
       MYSQL_DATABASE: graphikart_api
     ports:
       - "3306"
+    networks:
+      - dev
 
     volumes:
       - database_data:/var/lib/mysql
@@ -24,6 +26,8 @@ services:
       - 8080:80
     environment:
       - PMA_ARBITRARY=1
+    networks:
+      - dev
 
   www:
     build: php
