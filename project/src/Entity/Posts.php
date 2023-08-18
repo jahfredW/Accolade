@@ -2,24 +2,42 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use App\Repository\PostRepository;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PostsRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity(repositoryClass: PostRepository::class)]
-#[ApiResource]
-class Post
+#[ORM\Entity(repositoryClass: PostsRepository::class)]
+#[ApiResource(
+    
+    operations : [
+        new Get(
+            normalizationContext: ['groups' => ['read:test']]
+        ),
+        new Post(),
+        new GetCollection(
+            normalizationContext: ['groups' => ['read:collection']],
+        )
+    ]
+)]
+class Posts
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read:collection', 'read:test'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['read:collection'])]
     private ?string $message = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['read:collection'])]
     private ?string $picture = null;
 
     #[ORM\Column]
