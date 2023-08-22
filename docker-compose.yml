@@ -37,7 +37,6 @@ services:
     volumes:
       - ./php/vhosts:/etc/apache2/sites-enabled
       - ./:/var/www
-      - ./project/var/cache/dev:/var/www/project/var/cache/dev
     restart: always
     networks:
       - dev

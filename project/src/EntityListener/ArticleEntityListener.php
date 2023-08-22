@@ -9,8 +9,8 @@ use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 
-#[AsEntityListener(events: Events::prePersist, entity: Article::class)]
-#[AsEntityListener(events: Events::preUpdate, entity: Article::class)]
+#[AsEntityListener(event: Events::prePersist, entity: Article::class)]
+#[AsEntityListener(event: Events::preUpdate, entity: Article::class)]
 class ArticleEntityListener
 {
     private $slugger;
@@ -23,6 +23,7 @@ class ArticleEntityListener
     public function prePersist(Article $article, LifecycleEventArgs $event): void 
     {
         $article->computeSlug($this->slugger);
+        $article->setIsActive(1);
     }
     
     public function preUpdate(Article $article, LifecycleEventArgs $event): void 

@@ -27,6 +27,7 @@ class Category
     private Collection $articles;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read:article:item'])]
     private ?string $slug = null;
 
     public function __construct()

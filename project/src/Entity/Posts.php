@@ -7,23 +7,34 @@ use ApiPlatform\Metadata\Post;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PostsRepository;
+use App\Controller\FbPostController;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: PostsRepository::class)]
 #[ApiResource(
     
     operations : [
+        new GetCollection(
+            name :'FbPostController',
+            uriTemplate: '/posts/facebook',
+            controller : FbPostController::class,
+            normalizationContext: ['groups' => ['read:collection', 'post:test']],
+        ),
         new Get(
             normalizationContext: ['groups' => ['read:test']]
         ),
-        new Post(),
-        new GetCollection(
-            normalizationContext: ['groups' => ['read:collection']],
-        )
+        new Post(
+            normalizationContext: ['groups' => ['read:test']],
+            denormalizationContext: ['groups' => ['post:test']]
+            
+        ),
+        
     ]
 )]
+#[ORM\HasLifecycleCallbacks]
 class Posts
 {
     #[ORM\Id]
@@ -32,19 +43,27 @@ class Posts
     #[Groups(['read:collection', 'read:test'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['read:collection'])]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['read:collection', 'post:test'])]
     private ?string $message = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['read:collection'])]
-    private ?string $picture = null;
+    #[ORM\Column(length: 350, nullable: true)]
+    #[Groups(['read:collection', 'post:test'])]
+    #[SerializedName("full_picture")]
+    private ?string $fullPicture = null;
 
     #[ORM\Column]
+    #[SerializedName("created_time")]
+    #[Groups(['read:collection', 'post:test'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    public function setCreatedValue() : void 
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -63,14 +82,14 @@ class Posts
         return $this;
     }
 
-    public function getPicture(): ?string
+    public function getFullPicture(): ?string
     {
-        return $this->picture;
+        return $this->fullPicture;
     }
 
-    public function setPicture(?string $picture): static
+    public function setFullPicture(?string $fullPicture): static
     {
-        $this->picture = $picture;
+        $this->fullPicture = $fullPicture;
 
         return $this;
     }

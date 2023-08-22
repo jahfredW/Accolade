@@ -36,13 +36,12 @@ class PostsRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Post
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+   public function deleteAll(): int
+   {
+       return $this->createQueryBuilder('p')
+           ->delete()
+           ->getQuery()
+           ->execute()
+       ;
+   }
 }
