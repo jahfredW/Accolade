@@ -47,7 +47,7 @@ class Posts
     #[Groups(['read:collection', 'post:test'])]
     private ?string $message = null;
 
-    #[ORM\Column(length: 350, nullable: true)]
+    #[ORM\Column(length: 500, nullable: true)]
     #[Groups(['read:collection', 'post:test'])]
     #[SerializedName("full_picture")]
     private ?string $fullPicture = null;
