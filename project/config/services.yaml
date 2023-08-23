@@ -34,3 +34,7 @@ services:
     arguments: ["%kernel.project_dir%"]
 
   App\State\DependencyPostProcessor: ~
+
+  App\State\UserPasswordHasher:
+      bind:
+        $processor: '@api_platform.doctrine.orm.state.persist_processor'
